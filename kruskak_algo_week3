@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Edge {
+    int src, dest, weight;
+};
+
+int find(int parent[], int i) {
+    while (parent[i] != i)
+        i = parent[i];
+    return i;
+}
+
+void Union(int parent[], int x, int y) {
+    int rootX = find(parent, x);
+    int rootY = find(parent, y);
+    parent[rootX] = rootY;
+}
+
+int compare(const void* a, const void* b) {
+    return ((struct Edge*)a)->weight - ((struct Edge*)b)->weight;
+}
+
+void kruskal(struct Edge edges[], int V, int E) {
+    struct Edge result[V];
+    int parent[V];
+
+    for (int i = 0; i < V; i++)
+        parent[i] = i;
+
+    qsort(edges, E, sizeof(struct Edge), compare);
+
+    int count = 0;
+
+    for (int i = 0; i < E && count < V - 1; i++) {
+        int u = edges[i].src;
+        int v = edges[i].dest;
+
+        int setU = find(parent, u);
+        int setV = find(parent, v);
+
+        if (setU != setV) {
+            result[count++] = edges[i];
+            Union(parent, setU, setV);
+        }
+    }
+
+    printf("Edge \tWeight\n");
+    for (int i = 0; i < count; i++) {
+        printf("%d - %d \t%d\n",
+               result[i].src,
+               result[i].dest,
+               result[i].weight);
+    }
+}
+
+int main() {
+    int V, E;
+
+    printf("Enter vertices and edges: ");
+    scanf("%d %d", &V, &E);
+
+    struct Edge edges[E];
+
+    printf("Enter edges (src dest weight):\n");
+    for (int i = 0; i < E; i++) {
+        scanf("%d %d %d",
+              &edges[i].src,
+              &edges[i].dest,
+              &edges[i].weight);
+    }
+
+    kruskal(edges, V, E);
+
+    return 0;
+}
