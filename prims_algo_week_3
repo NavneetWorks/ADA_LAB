@@ -1,0 +1,60 @@
+
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<limits.h>
+
+int minKeyIdx(int key[],int visited[],int v){
+    int min = INT_MAX;
+    int minIdx = -1;
+    for(int i = 0;i<v;i++){
+        if(key[i]<min && !visited[i]){
+            min = key[i];
+            minIdx = i;
+        }
+    }
+    return minIdx;
+}
+
+void prims(int v,int graph[v][v]){
+    int key[v];
+    int parent[v];
+    int visited[v];
+
+    for(int i = 0;i<v;i++){
+        key[i] = INT_MAX;
+        parent[i] = -1;
+        visited[i] = 0;
+    }
+    key[0] = 0;
+
+    for(int i = 0;i<v-1;i++){
+        int u = minKeyIdx(key,visited,v);
+        visited[u] = 1;
+        for(int j = 0;j<v;j++){
+            if(graph[u][j] && !visited[j] && graph[u][j] <key[j]){
+                key[j] = graph[u][j];
+                parent[j] = u;
+            }
+        }
+    }
+    for(int i = 1;i<v;i++){
+        printf("%d-%d : %d\n",parent[i],i,key[i]);
+    }
+}
+
+int main(){
+    int v;
+    printf("Enter the number of vertices : ");
+    scanf("%d",&v);
+    int graph[v][v];
+    printf("Enter the adjacency matrix of graph : \n");
+    for(int i = 0;i<v;i++){
+        for(int j = 0;j<v;j++){
+            scanf("%d",&graph[i][j]);
+        }
+    }
+
+    prims(v,graph);
+    return 0;
+}
