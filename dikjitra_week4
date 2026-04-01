@@ -1,0 +1,64 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<limits.h>
+
+
+int minIdx(int visited[],int dist[],int v){
+    int idx = -1;
+    int min = INT_MAX;
+
+    for(int i = 0;i<v;i++){
+        if(!visited[i] && min > dist[i]){
+            min = dist[i];
+            idx = i;
+        }
+    }
+    return idx;
+}
+void dijiktra(int v,int graph[v][v]){
+    int dist[v];
+    int visited[v];
+    int parent[v];
+
+    for(int i = 0;i<v;i++){
+        dist[i] = INT_MAX;
+        visited[i] = 0;
+        parent[i] = -1;
+    }
+    dist[0] = 0;
+    parent[0] = 0;
+
+    for(int i = 0;i<v;i++){
+        int u = minIdx(visited,dist,v);
+        visited[u] = 1;
+
+        for(int j = 0;j<v;j++){
+            if(!visited[j] && graph[u][j] && dist[u] != INT_MAX && (graph[u][j] + dist[u]) < dist[j]){
+                dist[j] = graph[u][j] + dist[u];
+                parent[j] = u;
+            }
+        }
+    }
+
+
+    printf("\nSrc    dest   dist : \n");
+    for(int i = 0;i<v;i++){
+        printf("%d -> %d : %d\n",i,parent[i],dist[i]);
+    }
+}
+
+int main(){
+    int v;
+    printf("Enter the number of vertices : ");
+    scanf("%d",&v);
+    int graph[v][v];
+    printf("Enter the elements of adjacency matrix : ");
+    for(int i = 0;i<v;i++){
+        for(int j = 0;j<v;j++){
+            scanf("%d",&graph[i][j]);
+        }
+    }
+
+    dijiktra(v,graph);
+    return 0;
+}
