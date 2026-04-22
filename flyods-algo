@@ -1,0 +1,80 @@
+#include <stdio.h>
+
+#define INF 99999
+#define MAX 10
+
+// ── Floyd-Warshall ──────────────────────────────────────────────
+void floyd(int D[][MAX], int n) {
+    int i, j, k;
+
+    // for k ← 1 to n
+    for (k = 0; k < n; k++) {
+        // for i ← 1 to n
+        for (i = 0; i < n; i++) {
+            // for j ← 1 to n
+            for (j = 0; j < n; j++) {
+                // D[i][j] ← min{ D[i][j], D[i][k] + D[k][j] }
+                if (D[i][k] + D[k][j] < D[i][j]) {
+                    D[i][j] = D[i][k] + D[k][j];
+                }
+            }
+        }
+    }
+}
+
+// ── Print Matrix ────────────────────────────────────────────────
+void printMatrix(int D[][MAX], int n) {
+    int i, j;
+    printf("\nShortest Distance Matrix:\n\n");
+    printf("     ");
+    for (i = 0; i < n; i++)
+        printf("  v%d ", i + 1);
+    printf("\n     ");
+    for (i = 0; i < n; i++)
+        printf("-----");
+    printf("\n");
+
+    for (i = 0; i < n; i++) {
+        printf("v%d | ", i + 1);
+        for (j = 0; j < n; j++) {
+            if (D[i][j] == INF)
+                printf("  INF");
+            else
+                printf("%4d ", D[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// ── Main ────────────────────────────────────────────────────────
+int main() {
+    int n, i, j;
+    int W[MAX][MAX];
+    int D[MAX][MAX];
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("\nEnter weight matrix (enter %d for INF):\n", INF);
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            printf("W[%d][%d]: ", i + 1, j + 1);
+            scanf("%d", &W[i][j]);
+        }
+    }
+
+    // D ← W  (copy weight matrix into D)
+    for (i = 0; i < n; i++)
+        for (j = 0; j < n; j++)
+            D[i][j] = W[i][j];
+
+    printf("\nOriginal Weight Matrix:");
+    printMatrix(W, n);
+
+    // Run Floyd's algorithm
+    floyd(D, n);
+
+    printMatrix(D, n);
+
+    return 0;
+}
