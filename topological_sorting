@@ -1,0 +1,101 @@
+#include <stdio.h>
+
+#define MAX 20
+
+int queue[MAX];
+int front = 0, rear = -1;
+
+void enqueue(int vertex) {
+    queue[++rear] = vertex;
+}
+
+int dequeue() {
+    return queue[front++];
+}
+
+int isEmpty() {
+    return front > rear;
+}
+
+void topologicalSort(int graph[MAX][MAX], int n) {
+    int indegree[MAX];
+    int visited[MAX];
+    int topo[MAX];
+    int count = 0;
+
+    // Step 1: Initialize indegree and visited
+    for (int i = 0; i < n; i++) {
+        indegree[i] = 0;
+        visited[i] = 0;
+    }
+
+    // Step 2: Find indegree of each vertex
+    for (int j = 0; j < n; j++) {
+        for (int i = 0; i < n; i++) {
+            if (graph[i][j] == 1) {
+                indegree[j]++;
+            }
+        }
+    }
+
+    // Step 3: Enqueue all vertices having indegree 0
+    for (int i = 0; i < n; i++) {
+        if (indegree[i] == 0) {
+            enqueue(i);
+            visited[i] = 1;
+        }
+    }
+
+    // Step 4: Process queue
+    while (!isEmpty()) {
+        int u = dequeue();
+
+        topo[count] = u;
+        count++;
+
+        // Check all adjacent vertices of u
+        for (int w = 0; w < n; w++) {
+            if (graph[u][w] == 1 && visited[w] == 0) {
+                indegree[w]--;
+
+                if (indegree[w] == 0) {
+                    enqueue(w);
+                    visited[w] = 1;
+                }
+            }
+        }
+    }
+
+    // Step 5: Check if topological ordering is possible
+    if (count == n) {
+        printf("Topological Order: ");
+
+        for (int i = 0; i < count; i++) {
+            printf("%d ", topo[i]);
+        }
+
+        printf("\n");
+    } else {
+        printf("Topological ordering not possible. Graph contains a cycle.\n");
+    }
+}
+
+int main() {
+    int n;
+    int graph[MAX][MAX];
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter adjacency matrix:\n");
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &graph[i][j]);
+        }
+    }
+
+    topologicalSort(graph, n);
+
+    return 0;
+}
