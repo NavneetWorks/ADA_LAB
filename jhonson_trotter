@@ -1,0 +1,99 @@
+
+#include <stdio.h>
+
+#define MAX 20
+#define LEFT  -1
+#define RIGHT  1
+
+int perm[MAX], dir[MAX];
+
+/* Print current permutation */
+void printPermutation(int n) {
+    for (int i = 0; i < n; i++)
+        printf("%d ", perm[i]);
+    printf("\n");
+}
+
+/* Find the position of the largest mobile element */
+int largestMobilePosition(int n) {
+    int mobileValue = 0;
+    int mobilePos = -1;
+
+    for (int i = 0; i < n; i++) {
+
+        /* Element is pointing left */
+        if (dir[i] == LEFT && i > 0 &&
+            perm[i] > perm[i - 1] && perm[i] > mobileValue) {
+            mobileValue = perm[i];
+            mobilePos = i;
+        }
+
+        /* Element is pointing right */
+        if (dir[i] == RIGHT && i < n - 1 &&
+            perm[i] > perm[i + 1] && perm[i] > mobileValue) {
+            mobileValue = perm[i];
+            mobilePos = i;
+        }
+    }
+
+    return mobilePos;
+}
+
+/* Johnson-Trotter algorithm */
+void johnsonTrotter(int n) {
+    int pos, newPos, mobileElement, temp;
+
+    /* Initialize first permutation and directions */
+    for (int i = 0; i < n; i++) {
+        perm[i] = i + 1;
+        dir[i] = LEFT;
+    }
+
+    printf("Permutations are:\n");
+    printPermutation(n);
+
+    while (1) {
+        pos = largestMobilePosition(n);
+
+        /* No mobile element means all permutations are generated */
+        if (pos == -1)
+            break;
+
+        mobileElement = perm[pos];
+        newPos = pos + dir[pos];
+
+        /* Swap mobile element with adjacent element */
+        temp = perm[pos];
+        perm[pos] = perm[newPos];
+        perm[newPos] = temp;
+
+        /* Swap their directions also */
+        temp = dir[pos];
+        dir[pos] = dir[newPos];
+        dir[newPos] = temp;
+
+        /* Reverse direction of all elements larger than mobile element */
+        for (int i = 0; i < n; i++) {
+            if (perm[i] > mobileElement)
+                dir[i] = -dir[i];
+        }
+
+        printPermutation(n);
+    }
+}
+
+int main() {
+    int n;
+
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    if (n <= 0 || n > MAX) {
+        printf("Enter n between 1 and %d.\n", MAX);
+        return 0;
+    }
+
+    johnsonTrotter(n);
+
+    return 0;
+}
