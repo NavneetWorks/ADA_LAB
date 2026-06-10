@@ -2,48 +2,59 @@
 #include <stdlib.h>
 #include <time.h>
 
-void downHeap(int H[], int n, int k) {
-    int j, v, heap;
-
-    v = H[k];
-    heap = 0;
-
-    while (!heap && 2 * k <= n) {
-        j = 2 * k;
-
-        if (j < n) {
-            if (H[j] < H[j + 1])
-                j = j + 1;
-        }
-
-        if (v >= H[j])
-            heap = 1;
-        else {
-            H[k] = H[j];
-            k = j;
-        }
-    }
-
-    H[k] = v;
-}
-
-void heapBottomUp(int H[], int n) {
-    for (int i = n / 2; i >= 1; i--) {
-        downHeap(H, n, i);
-    }
-}
-
 void heapSort(int H[], int n) {
-    int temp;
+    int i, k, j, v, temp, heap;
 
-    heapBottomUp(H, n);
+    for (i = n / 2; i >= 1; i--) {
+        k = i;
+        v = H[k];
+        heap = 0;
 
-    for (int i = n; i >= 2; i--) {
+        while (!heap && 2 * k <= n) {
+            j = 2 * k;
+
+            if (j < n) {
+                if (H[j] < H[j + 1])
+                    j = j + 1;
+            }
+
+            if (v >= H[j])
+                heap = 1;
+            else {
+                H[k] = H[j];
+                k = j;
+            }
+        }
+
+        H[k] = v;
+    }
+
+    for (i = n; i >= 2; i--) {
         temp = H[1];
         H[1] = H[i];
         H[i] = temp;
 
-        downHeap(H, i - 1, 1);
+        k = 1;
+        v = H[k];
+        heap = 0;
+
+        while (!heap && 2 * k <= i - 1) {
+            j = 2 * k;
+
+            if (j < i - 1) {
+                if (H[j] < H[j + 1])
+                    j = j + 1;
+            }
+
+            if (v >= H[j])
+                heap = 1;
+            else {
+                H[k] = H[j];
+                k = j;
+            }
+        }
+
+        H[k] = v;
     }
 }
 
@@ -65,7 +76,6 @@ int main() {
             return 1;
         }
 
-        // Random input generation
         for (int i = 1; i <= n; i++) {
             H[i] = rand() % 100000;
         }
