@@ -1,58 +1,57 @@
-#include<stdio.h>
-#include<time.h>
-#include<stdlib.h>
+#include <stdio.h>
 
-void swap(int*x,int*y){
-    int temp = *x;
-    *x = *y;
-    *y = temp;
-}
-void display(int arr[],int size){
-    printf("\nArray : ");
-    for(int i = 0;i<size;i++){
-        printf("%d ",arr[i]);
-    }
-}
-int partition(int arr[],int low,int high){
-    int pivot = arr[high];
+int partition(int a[], int low, int high) {
+    int pivot = a[low];
     int i = low - 1;
+    int j = high + 1;
+    int temp;
 
-    for(int j = low;j<high;j++){
-        if(arr[j] < pivot){
-            i += 1;
-            swap(&arr[i],&arr[j]);
-        }
+    while (1) {
+        do {
+            i++;
+        } while (a[i] < pivot);
+
+        do {
+            j--;
+        } while (a[j] > pivot);
+
+        if (i >= j)
+            return j;
+
+        temp = a[i];
+        a[i] = a[j];
+        a[j] = temp;
     }
-    swap(&arr[i+1],&arr[high]);
-   // display(arr,);
-    return i + 1;
 }
-void quickSort(int arr[],int low,int high){
-    if(low < high){
-        int x = partition(arr,low,high);
-       // printf("\nx = %d",x);
-        quickSort(arr,low,x-1);
-        quickSort(arr,x+1,high);
+
+void quickSort(int a[], int low, int high) {
+    if (low < high) {
+        int p = partition(a, low, high);
+
+        quickSort(a, low, p);
+        quickSort(a, p + 1, high);
     }
 }
-int main(){
-    int size = 100000;
-    int n = 10000;
-    int arr[size];
-    while(n<=50000){
-   for(int i = 0;i<n;i++){
-     arr[i] = rand()%n;
+
+int main() {
+    int n;
+
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    int a[n];
+
+    printf("Enter %d elements:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &a[i]);
     }
-    clock_t start,end;
-    start = clock();
-    quickSort(arr,0,n-1);
-    //display(arr,n-1);
-   // partition(arr,0,size-1);
-   // display(arr,7);
-    end = clock();
-    double time = ((double)(end - start))/CLOCKS_PER_SEC;
-    printf("\nTime taken at iteration %d : %f",n,time);
-    n += 10000;
+
+    quickSort(a, 0, n - 1);
+
+    printf("Sorted array:\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", a[i]);
     }
+
     return 0;
 }
