@@ -2,59 +2,48 @@
 #include <stdlib.h>
 #include <time.h>
 
-void heapSort(int H[], int n) {
-    int i, k, j, v, temp, heap;
+void downHeap(int H[], int n, int k) {
+    int j, v, heap;
 
-    for (i = n / 2; i >= 1; i--) {
-        k = i;
-        v = H[k];
-        heap = 0;
+    v = H[k];
+    heap = 0;
 
-        while (!heap && 2 * k <= n) {
-            j = 2 * k;
+    while (!heap && 2 * k <= n) {
+        j = 2 * k;
 
-            if (j < n) {
-                if (H[j] < H[j + 1])
-                    j = j + 1;
-            }
-
-            if (v >= H[j])
-                heap = 1;
-            else {
-                H[k] = H[j];
-                k = j;
-            }
+        if (j < n) {
+            if (H[j] < H[j + 1])
+                j = j + 1;
         }
 
-        H[k] = v;
+        if (v >= H[j])
+            heap = 1;
+        else {
+            H[k] = H[j];
+            k = j;
+        }
     }
 
-    for (i = n; i >= 2; i--) {
+    H[k] = v;
+}
+
+void heapBottomUp(int H[], int n) {
+    for (int i = n / 2; i >= 1; i--) {
+        downHeap(H, n, i);
+    }
+}
+
+void heapSort(int H[], int n) {
+    int temp;
+
+    heapBottomUp(H, n);
+
+    for (int i = n; i >= 2; i--) {
         temp = H[1];
         H[1] = H[i];
         H[i] = temp;
 
-        k = 1;
-        v = H[k];
-        heap = 0;
-
-        while (!heap && 2 * k <= i - 1) {
-            j = 2 * k;
-
-            if (j < i - 1) {
-                if (H[j] < H[j + 1])
-                    j = j + 1;
-            }
-
-            if (v >= H[j])
-                heap = 1;
-            else {
-                H[k] = H[j];
-                k = j;
-            }
-        }
-
-        H[k] = v;
+        downHeap(H, i - 1, 1);
     }
 }
 
